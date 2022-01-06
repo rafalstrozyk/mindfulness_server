@@ -29,14 +29,12 @@
     "prettier": "^2.5.1"
   },
   "lint-staged": {
-    "*.{js}": [
+    "*.js": [
       "prettier --write",
-      "eslint --fix",
-      "git add"
+      "eslint --fix"
     ],
     "*.{html,css,less,ejs}": [
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ]
   }
 }
