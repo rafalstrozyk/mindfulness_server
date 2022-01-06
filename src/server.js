@@ -1,16 +1,16 @@
-const { append } = require('express/lib/response');
+import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
-const express = require('express'),
-  cors = require('cors'),
-  cookieParser = require('cookie-parser'),
-  server = express(),
-  port = 8000;
+const server = express();
+const port = 8000;
 
 server.use(express.json());
+
 server.use(cors());
 server.use(cookieParser());
+
 server.use((req, res, next) => {
-  console.log(req.url);
   next();
 });
 
