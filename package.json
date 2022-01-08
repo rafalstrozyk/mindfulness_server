@@ -13,9 +13,13 @@
   "author": "Rafał Stróżyk",
   "license": "ISC",
   "dependencies": {
+    "apollo-server-express": "^3.6.1",
+    "body-parser": "^1.19.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-    "express": "^4.17.2"
+    "express": "^4.17.2",
+    "express-session": "^1.17.2",
+    "passport": "^0.5.2"
   },
   "devDependencies": {
     "@babel/core": "^7.16.7",

@@ -1,23 +1,44 @@
 import express from 'express';
+import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import passport from 'passport';
+import bodyParser from 'body-parser';
+import session from 'express-session';
+import resolvers from './graphql/resolvers';
+import typeDefs from './graphql/typeDefs';
 
-const server = express();
 const port = 8000;
 
-server.use(express.json());
+async function startServer() {
+  const app = express();
 
-server.use(cors());
-server.use(cookieParser());
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+  });
 
-server.use((req, res, next) => {
-  next();
-});
+  await server.start();
+  server.applyMiddleware({ app, path: '/gql' });
 
-server.get('/', (req, res) => {
-  res.json({ hello: 'hello!' });
-});
+  app.use(express.json());
 
-server.listen(port, () => {
-  console.log(`server start at http://localhost:${port}`);
-});
+  app.use(cors());
+  app.use(cookieParser());
+  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(
+    session({ secret: 'secret XD', resave: true, saveUninitialized: true }),
+  );
+  app.use(passport.initialize());
+  app.use(passport.session());
+
+  app.use((req, res, next) => {
+    next();
+  });
+
+  app.listen(port, () => {
+    console.log(`server start at http://localhost:${port}`);
+  });
+}
+
+startServer();
