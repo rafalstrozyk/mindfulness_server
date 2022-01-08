@@ -5,8 +5,11 @@ import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import bodyParser from 'body-parser';
 import session from 'express-session';
+import mongoose from 'mongoose';
 import resolvers from './graphql/resolvers';
 import typeDefs from './graphql/typeDefs';
+
+require('dotenv').config();
 
 const port = 8000;
 
@@ -35,6 +38,11 @@ async function startServer() {
   app.use((req, res, next) => {
     next();
   });
+
+  await mongoose.connect(
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.wkf0f.mongodb.net/mindfulnes?retryWrites=true&w=majority`,
+  );
+  console.log('Mongoose connected...');
 
   app.listen(port, () => {
     console.log(`server start at http://localhost:${port}`);
