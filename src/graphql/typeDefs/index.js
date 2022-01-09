@@ -1,30 +1,5 @@
-import { gql } from 'apollo-server-express';
+import postTypeDefs from './postTypeDefs';
 
-const typeDefs = gql`
-  type Post {
-    id: ID
-    title: String
-    description: String
-  }
-
-  type Query {
-    hello: String
-
-    getAllPosts: [Post]
-
-    getPost(id: ID): Post
-  }
-
-  input PostInput {
-    title: String
-    description: String
-  }
-
-  type Mutation {
-    createPost(post: PostInput): Post
-    deletePost(id: ID): String
-    updatePost(id: ID, post: PostInput): Post
-  }
-`;
+const typeDefs = [postTypeDefs];
 
 export default typeDefs;

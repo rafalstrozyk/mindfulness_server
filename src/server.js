@@ -2,16 +2,20 @@ import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import passport from 'passport';
 import bodyParser from 'body-parser';
-import session from 'express-session';
 import mongoose from 'mongoose';
+import passport from 'passport';
 import resolvers from './graphql/resolvers';
 import typeDefs from './graphql/typeDefs';
+import authRouter from './Routers/auth';
+
+import './strategies/JwtStrategy';
+import './strategies/LocalStrategy';
 
 require('dotenv').config();
 
 const port = 8000;
+const dbURL = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.wkf0f.mongodb.net/mindfulnes?retryWrites=true&w=majority`;
 
 async function startServer() {
   const app = express();
@@ -24,25 +28,18 @@ async function startServer() {
   await server.start();
   server.applyMiddleware({ app, path: '/gql' });
 
-  app.use(express.json());
-
+  app.use(cookieParser(process.env.COOKIE_SECRET));
+  app.use(bodyParser.json());
   app.use(cors());
-  app.use(cookieParser());
-  app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(
-    session({ secret: 'secret XD', resave: true, saveUninitialized: true }),
-  );
   app.use(passport.initialize());
-  app.use(passport.session());
 
-  app.use((req, res, next) => {
-    next();
-  });
+  await mongoose
+    .connect(dbURL)
+    .then(console.log('db connected'))
+    .catch((err) => console.log(err));
 
-  await mongoose.connect(
-    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.wkf0f.mongodb.net/mindfulnes?retryWrites=true&w=majority`,
-  );
-  console.log('Mongoose connected...');
+  // Routes
+  app.use('/auth', authRouter);
 
   app.listen(port, () => {
     console.log(`server start at http://localhost:${port}`);
