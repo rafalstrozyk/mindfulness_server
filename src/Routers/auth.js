@@ -11,13 +11,6 @@ import {
 
 const router = express.Router();
 
-// const {
-//   getToken,
-//   COOKIE_OPTIONS,
-//   getRefreshToken,
-//   verifyUser,
-// } = require('../authenticate');
-
 router.get('/me', verifyUser, (req, res) => {
   console.log(req.user);
   res.send(req.user);

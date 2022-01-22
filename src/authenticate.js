@@ -10,7 +10,7 @@ export const COOKIE_OPTIONS = {
   secure: !dev,
   signed: true,
   maxAge: 60 * 60 * 24 * 30 * 1000,
-  sameSite: 'none',
+  sameSite: false,
 };
 
 export const getToken = (user) => jwt.sign(user, process.env.JWT_SECRET, {

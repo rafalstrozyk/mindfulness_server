@@ -20,6 +20,26 @@ const dbURL = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@c
 async function startServer() {
   const app = express();
 
+  app.use(
+    cors({
+      origin: 'http://localhost:3000',
+      methods: 'GET,HEAD,POST,PATCH,DELETE,OPTIONS',
+      credentials: true, // required to pass
+      allowedHeaders: 'Content-Type, Authorization, X-Requested-With',
+    }),
+  );
+
+  app.use((req, res, next) => {
+    res.header('Content-Type', 'application/json;charset=UTF-8');
+    res.header('Access-Control-Allow-Credentials', true);
+    res.header(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept',
+    );
+    console.log('request');
+    next();
+  });
+
   const server = new ApolloServer({
     typeDefs,
     resolvers,
@@ -30,7 +50,6 @@ async function startServer() {
 
   app.use(cookieParser(process.env.COOKIE_SECRET));
   app.use(bodyParser.json());
-  app.use(cors());
   app.use(passport.initialize());
 
   await mongoose
