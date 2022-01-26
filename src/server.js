@@ -8,6 +8,7 @@ import passport from 'passport';
 import resolvers from './graphql/resolvers';
 import typeDefs from './graphql/typeDefs';
 import authRouter from './Routers/auth';
+// import { verifyUser } from './authenticate';
 
 import './strategies/JwtStrategy';
 import './strategies/LocalStrategy';
@@ -19,6 +20,13 @@ const dbURL = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@c
 
 async function startServer() {
   const app = express();
+
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+  });
+
+  await server.start();
 
   app.use(
     cors({
@@ -40,13 +48,7 @@ async function startServer() {
     next();
   });
 
-  const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-  });
-
-  await server.start();
-  server.applyMiddleware({ app, path: '/gql' });
+  app.use('/gql', passport.authenticate('jwt', { session: false }));
 
   app.use(cookieParser(process.env.COOKIE_SECRET));
   app.use(bodyParser.json());
@@ -59,6 +61,17 @@ async function startServer() {
 
   // Routes
   app.use('/auth', authRouter);
+
+  server.applyMiddleware({
+    app,
+    path: '/gql',
+    cors: {
+      origin: 'http://localhost:3000',
+      methods: 'GET,HEAD,POST,PATCH,DELETE,OPTIONS',
+      credentials: true, // required to pass
+      allowedHeaders: 'Content-Type, Authorization, X-Requested-With',
+    },
+  });
 
   app.listen(port, () => {
     console.log(`server start at http://localhost:${port}`);

@@ -15,6 +15,7 @@
     "implicit-arrow-linebreak": ["error", "beside"],
     "no-param-reassign": ["error", { "props": false }],
     "camelcase": "off",
-    "no-underscore-dangle": "off"
+    "no-underscore-dangle": "off",
+    "no-new": "off"
   }
 }
